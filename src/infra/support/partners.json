@@ -6,7 +6,7 @@
         "ownerName": "Ze da Ambev",
         "document": "02.453.716/000170",
         "coverageArea": {
-           "type": "Polygon",
+           "type": "MultiPolygon",
            "coordinates": [
               [
                  [
