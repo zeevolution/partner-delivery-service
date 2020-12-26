@@ -2,46 +2,46 @@ const { Router } = require('express');
 const { inject } = require('awilix-express');
 const Status = require('http-status');
 
-const UsersController = {
+const PartnersController = {
   get router() {
     const router = Router();
 
-    router.use(inject('userSerializer'));
+    router.use(inject('partnerSerializer'));
 
-    router.get('/', inject('getAllUsers'), this.index);
-    router.get('/:id', inject('getUser'), this.show);
-    router.post('/', inject('createUser'), this.create);
-    router.put('/:id', inject('updateUser'), this.update);
-    router.delete('/:id', inject('deleteUser'), this.delete);
+    router.get('/', inject('getAllPartners'), this.index);
+    router.get('/:id', inject('getPartner'), this.show);
+    router.post('/', inject('createPartner'), this.create);
+    router.put('/:id', inject('updatePartner'), this.update);
+    router.delete('/:id', inject('deletePartner'), this.delete);
 
     return router;
   },
 
   index(req, res, next) {
-    const { getAllUsers, userSerializer } = req;
-    const { SUCCESS, ERROR } = getAllUsers.outputs;
+    const { getAllPartners, partnerSerializer } = req;
+    const { SUCCESS, ERROR } = getAllPartners.outputs;
 
-    getAllUsers
-      .on(SUCCESS, (users) => {
+    getAllPartners
+      .on(SUCCESS, (partners) => {
         res
           .status(Status.OK)
-          .json(users.map(userSerializer.serialize));
+          .json(partners.map(partnerSerializer.serialize));
       })
       .on(ERROR, next);
 
-    getAllUsers.execute();
+    getAllPartners.execute();
   },
 
   show(req, res, next) {
-    const { getUser, userSerializer } = req;
+    const { getPartner, partnerSerializer } = req;
 
-    const { SUCCESS, ERROR, NOT_FOUND } = getUser.outputs;
+    const { SUCCESS, ERROR, NOT_FOUND } = getPartner.outputs;
 
-    getUser
+    getPartner
       .on(SUCCESS, (user) => {
         res
           .status(Status.OK)
-          .json(userSerializer.serialize(user));
+          .json(partnerSerializer.serialize(user));
       })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
@@ -51,18 +51,18 @@ const UsersController = {
       })
       .on(ERROR, next);
 
-    getUser.execute(Number(req.params.id));
+    getPartner.execute(Number(req.params.id));
   },
 
   create(req, res, next) {
-    const { createUser, userSerializer } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = createUser.outputs;
+    const { createPartner, partnerSerializer } = req;
+    const { SUCCESS, ERROR, VALIDATION_ERROR } = createPartner.outputs;
 
-    createUser
+    createPartner
       .on(SUCCESS, (user) => {
         res
           .status(Status.CREATED)
-          .json(userSerializer.serialize(user));
+          .json(partnerSerializer.serialize(user));
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
@@ -72,18 +72,23 @@ const UsersController = {
       })
       .on(ERROR, next);
 
-    createUser.execute(req.body);
+    createPartner.execute(req.body);
   },
 
   update(req, res, next) {
-    const { updateUser, userSerializer } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR, NOT_FOUND } = updateUser.outputs;
+    const { updatePartner, partnerSerializer } = req;
+    const {
+      SUCCESS,
+      ERROR,
+      VALIDATION_ERROR,
+      NOT_FOUND
+    } = updatePartner.outputs;
 
-    updateUser
+    updatePartner
       .on(SUCCESS, (user) => {
         res
           .status(Status.ACCEPTED)
-          .json(userSerializer.serialize(user));
+          .json(partnerSerializer.serialize(user));
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
@@ -99,14 +104,14 @@ const UsersController = {
       })
       .on(ERROR, next);
 
-    updateUser.execute(Number(req.params.id), req.body);
+    updatePartner.execute(Number(req.params.id), req.body);
   },
 
   delete(req, res, next) {
-    const { deleteUser } = req;
-    const { SUCCESS, ERROR,  NOT_FOUND } = deleteUser.outputs;
+    const { deletePartner } = req;
+    const { SUCCESS, ERROR,  NOT_FOUND } = deletePartner.outputs;
 
-    deleteUser
+    deletePartner
       .on(SUCCESS, () => {
         res.status(Status.ACCEPTED).end();
       })
@@ -118,8 +123,8 @@ const UsersController = {
       })
       .on(ERROR, next);
 
-    deleteUser.execute(Number(req.params.id));
+    deletePartner.execute(Number(req.params.id));
   }
 };
 
-module.exports = UsersController;
+module.exports = PartnersController;

@@ -1,20 +1,20 @@
-const UserMapper = require('./SequelizeUserMapper');
+const PartnerMapper = require('./SequelizePartnerMapper');
 
-class SequelizeUsersRepository {
-  constructor({ UserModel }) {
-    this.UserModel = UserModel;
+class SequelizePartnersRepository {
+  constructor({ PartnerModel }) {
+    this.PartnerModel = PartnerModel;
   }
 
   async getAll(...args) {
-    const users = await this.UserModel.findAll(...args);
+    const users = await this.PartnerModel.findAll(...args);
 
-    return users.map(UserMapper.toEntity);
+    return users.map(PartnerMapper.toEntity);
   }
 
   async getById(id) {
     const user = await this._getById(id);
 
-    return UserMapper.toEntity(user);
+    return PartnerMapper.toEntity(user);
   }
 
   async add(user) {
@@ -27,8 +27,10 @@ class SequelizeUsersRepository {
       throw error;
     }
 
-    const newUser = await this.UserModel.create(UserMapper.toDatabase(user));
-    return UserMapper.toEntity(newUser);
+    const newUser = await this.PartnerModel
+      .create(PartnerMapper.toDatabase(user));
+
+    return PartnerMapper.toEntity(newUser);
   }
 
   async remove(id) {
@@ -41,11 +43,11 @@ class SequelizeUsersRepository {
   async update(id, newData) {
     const user = await this._getById(id);
 
-    const transaction = await this.UserModel.sequelize.transaction();
+    const transaction = await this.PartnerModel.sequelize.transaction();
 
     try {
       const updatedUser = await user.update(newData, { transaction });
-      const userEntity = UserMapper.toEntity(updatedUser);
+      const userEntity = PartnerMapper.toEntity(updatedUser);
 
       const { valid, errors } = userEntity.validate();
 
@@ -67,18 +69,18 @@ class SequelizeUsersRepository {
   }
 
   async count() {
-    return await this.UserModel.count();
+    return await this.PartnerModel.count();
   }
 
   // Private
 
   async _getById(id) {
     try {
-      return await this.UserModel.findById(id, { rejectOnEmpty: true });
+      return await this.PartnerModel.findById(id, { rejectOnEmpty: true });
     } catch(error) {
       if(error.name === 'SequelizeEmptyResultError') {
         const notFoundError = new Error('NotFoundError');
-        notFoundError.details = `User with id ${id} can't be found.`;
+        notFoundError.details = `Partner with id ${id} can't be found.`;
 
         throw notFoundError;
       }
@@ -88,4 +90,4 @@ class SequelizeUsersRepository {
   }
 }
 
-module.exports = SequelizeUsersRepository;
+module.exports = SequelizePartnersRepository;

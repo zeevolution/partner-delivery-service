@@ -29,16 +29,7 @@ module.exports = ({ config, containerMiddleware, loggerMiddleware, errorHandler,
     .use(containerMiddleware)
     .use('/docs', swaggerMiddleware);
 
-  /*
-   * Add your API routes here
-   *
-   * You can use the `controllers` helper like this:
-   * apiRouter.use('/users', controller(controllerPath))
-   *
-   * The `controllerPath` is relative to the `interfaces/http` folder
-   */
-
-  apiRouter.use('/users', controller('user/UsersController'));
+  apiRouter.use('/partners', controller('partner/PartnersController'));
 
   router.use('/api', apiRouter);
 

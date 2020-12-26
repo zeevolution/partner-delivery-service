@@ -4,14 +4,11 @@ const { scopePerRequest } = require('awilix-express');
 const config = require('../config');
 const Application = require('./app/Application');
 const {
-  CreateUser,
-  GetAllUsers,
-  GetUser,
-  UpdateUser,
-  DeleteUser
-} = require('./app/user');
+  GetAllPartners,
+  GetPartner
+} = require('./app/partner');
 
-const UserSerializer = require('./interfaces/http/user/UserSerializer');
+const PartnerSerializer = require('./interfaces/http/partner/PartnerSerializer');
 
 const Server = require('./interfaces/http/Server');
 const router = require('./interfaces/http/router');
@@ -21,8 +18,8 @@ const devErrorHandler = require('./interfaces/http/errors/devErrorHandler');
 const swaggerMiddleware = require('./interfaces/http/swagger/swaggerMiddleware');
 
 const logger = require('./infra/logging/logger');
-const SequelizeUsersRepository = require('./infra/user/SequelizeUsersRepository');
-const { database, User: UserModel } = require('./infra/database/models');
+const SequelizePartnersRepository = require('./infra/partner/SequelizePartnersRepository');
+const { database, Partner: PartnerModel } = require('./infra/database/models');
 
 const container = createContainer();
 
@@ -53,27 +50,24 @@ container
 
 // Repositories
 container.register({
-  usersRepository: asClass(SequelizeUsersRepository).singleton()
+  partnersRepository: asClass(SequelizePartnersRepository).singleton()
 });
 
 // Database
 container.register({
   database: asValue(database),
-  UserModel: asValue(UserModel)
+  PartnerModel: asValue(PartnerModel)
 });
 
 // Operations
 container.register({
-  createUser: asClass(CreateUser),
-  getAllUsers: asClass(GetAllUsers),
-  getUser: asClass(GetUser),
-  updateUser: asClass(UpdateUser),
-  deleteUser: asClass(DeleteUser)
+  getAllPartners: asClass(GetAllPartners),
+  getPartner: asClass(GetPartner)
 });
 
 // Serializers
 container.register({
-  userSerializer: asValue(UserSerializer)
+  partnerSerializer: asValue(PartnerSerializer)
 });
 
 module.exports = container;
